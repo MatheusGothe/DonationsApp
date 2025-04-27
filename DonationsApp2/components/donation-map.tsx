@@ -77,7 +77,9 @@ export default function DonationMap() {
         </div>
 
         <div className="flex-1 h-full">
-         <Map points={filteredPoints} userLocation={userLocation} />
+          {userLocation && (
+            <Map points={filteredPoints} userLocation={userLocation} />
+          )}
         </div>
       </div>
     </div>

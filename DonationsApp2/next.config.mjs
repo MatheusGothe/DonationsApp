@@ -22,7 +22,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  allowedDevOrigins: ["192.168.18.93"],
+  allowedDevOrigins: ["192.168.18.93:3000","192.168.18.4:3000"],  
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
