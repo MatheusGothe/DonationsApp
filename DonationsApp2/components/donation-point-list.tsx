@@ -9,7 +9,6 @@ interface DonationPointListProps {
 export default function DonationPointList({ points }: DonationPointListProps) {
   const { setPointClicked } = useDonationPoints();  // Pegando o contexto
   const handleCardClick = (point: DonationPoint) => {
-    console.log('clicou')
     setPointClicked(point);  // Atualizando o ponto clicado
   };
 

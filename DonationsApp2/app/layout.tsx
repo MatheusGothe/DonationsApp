@@ -22,6 +22,9 @@ export default function RootLayout({
 }>) { 
   return (
     <html lang="pt-BR">
+      <head> 
+        <link rel="icon" href="favicon.svg" />
+      </head>
       <body className={inter.className} suppressHydrationWarning>
         <ToastProvider>
           {children}
