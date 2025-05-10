@@ -5,6 +5,13 @@ import type { ReactNode } from "react";
 
 export type DonationType = "food" | "clothes" | "both";
 
+interface PointClicked {
+  id: string;
+  latitude: number;
+  longitude: number;
+  timestamp: number;
+}
+
 export interface DonationPoint {
   id: string;
   name: string;
@@ -29,8 +36,8 @@ interface DonationPointContextType {
   setSelectingLocation: (value: boolean) => void;
   selectedLocation: Location | null;
   setSelectedLocation: (location: Location) => void;
-  pointClicked: string | null;
-  setPointClicked: (id: string | null) => void;
+  pointClicked: PointClicked | null;
+  setPointClicked: (point: PointClicked | null) => void;
   registerMap: (map: L.Map) => void;
 }
 
@@ -40,7 +47,7 @@ export const DonationPointProvider = ({ children, initialPoints = [] }: { childr
   const [donationPoints, setDonationPoints] = useState<DonationPoint[]>(initialPoints);
   const [selectingLocation, setSelectingLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-  const [pointClicked, setPointClicked] = useState<string | null>(null);
+  const [pointClicked, setPointClicked] = useState<PointClicked | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
   const addDonationPoint = (point: Omit<DonationPoint, 'id'>) => {

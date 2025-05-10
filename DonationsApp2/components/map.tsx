@@ -28,6 +28,9 @@ export default function MapComponent({ userLocation }: MapProps) {
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
   const userLocationMarkerRef = useRef<L.Marker | null>(null);
+
+  const temporaryMarkerRef = useRef<L.Marker | null>(null); // Marcador temporário durante a seleção
+
   const { toast } = useToast();
   const loadLeaflet = async () => {
     if (!leafletRef.current) {
@@ -49,6 +52,7 @@ export default function MapComponent({ userLocation }: MapProps) {
       }; // Default to São Paulo if no user location
 
       if (!mapRef.current || mapInstanceRef.current) return;
+
 
       const map = L.map(mapRef.current).setView([latitude, longitude], 12);
       L.tileLayer(TRACESTACK_URL, { attribution: TRACESTACK_ATTRIB }).addTo(
@@ -87,20 +91,25 @@ export default function MapComponent({ userLocation }: MapProps) {
 
       const style = document.createElement("style");
       style.innerHTML = `
-        .leaflet-control.custom-btn {
-          cursor: pointer !important;
-        }
-      `;
+                                    .leaflet-control.custom-btn {
+                                      cursor: pointer !important;
+                                    }
+                                  `;
       document.head.appendChild(style);
 
       map.on("click", (e: L.LeafletMouseEvent) => {
         if (selectingLocationRef.current) {
-          console.log("Lat:", e.latlng.lat, "Lng:", e.latlng.lng); // <-- Logando
           setSelectedLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
-          //   toast({ title: "Localização selecionada com sucesso!" });
           setSelectingLocation(false);
 
-          L.marker([e.latlng.lat, e.latlng.lng], {
+
+           // Se já existe um marcador temporário, removê-lo
+           if (temporaryMarkerRef.current) {
+            mapInstanceRef.current?.removeLayer(temporaryMarkerRef.current); // Remove o marcador temporário anterior
+          }
+
+          // Adiciona um novo marcador temporário
+          temporaryMarkerRef.current = L.marker([e.latlng.lat, e.latlng.lng], {
             icon: L.icon({
               iconUrl: "/gps.png",
               iconSize: [30, 30],
@@ -109,14 +118,8 @@ export default function MapComponent({ userLocation }: MapProps) {
             .addTo(map)
             .bindPopup("Local selecionado")
             .openPopup();
-
-          // Contando quantos marcadores existem no mapa
-              // Adicionando o novo marcador à referência
-
-    // Contando quantos marcadores existem
-
-    // Exibindo a contagem de marcadores no console
         }
+
       });
 
       await updateMarkers();
@@ -156,10 +159,10 @@ export default function MapComponent({ userLocation }: MapProps) {
         })
           .bindPopup(
             `<div style="max-width:200px">
-              <h3 style="font-weight:bold;">${point.name}</h3>
-              <p>${point.address}</p>
-              <p>${point.openingHours}</p>
-            </div>`
+                                          <h3 style="font-weight:bold;">${point.name}</h3>
+                                          <p>${point.address}</p>
+                                          <p>${point.openingHours}</p>
+                                        </div>`
           )
           .addTo(map);
         markersRef.current[point.id] = marker;
@@ -178,7 +181,6 @@ export default function MapComponent({ userLocation }: MapProps) {
 
   useEffect(() => {
     if (mapInstanceRef.current && points.length > 0) {
-      console.log("caiu");
       updateMarkers();
     }
   }, [updateMarkers]);
@@ -186,6 +188,13 @@ export default function MapComponent({ userLocation }: MapProps) {
   useEffect(() => {
     goToPointLocation(pointClicked);
   }, [pointClicked]);
+
+  useEffect(() => {
+    const mapContainer = mapRef.current;
+    if (!mapContainer) return;
+
+    mapContainer.style.cursor = selectingLocation ? "pointer" : "";
+  }, [selectingLocation]);
 
   const goToUserLocation = () => {
     if (!userLocation || !mapInstanceRef.current) return;
@@ -195,14 +204,12 @@ export default function MapComponent({ userLocation }: MapProps) {
 
   const goToPointLocation = () => {
     if (!pointClicked || !mapInstanceRef.current) return;
-    console.log('entrouuu')
     const { latitude, longitude } = pointClicked;
     mapInstanceRef.current.setView([latitude, longitude], 15);
   };
 
   return (
     <div className="relative w-full h-full">
-      {/* <div ref={mapRef} className={`w-full h-full ${selectingLocation ? "cursor-pointer" : "cursor-default"} `} /> */}
       <div ref={mapRef} className={`w-full h-full`} />
     </div>
   );

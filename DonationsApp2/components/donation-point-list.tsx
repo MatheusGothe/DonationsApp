@@ -9,8 +9,12 @@ interface DonationPointListProps {
 export default function DonationPointList({ points }: DonationPointListProps) {
   const { setPointClicked } = useDonationPoints();  // Pegando o contexto
   const handleCardClick = (point: DonationPoint) => {
-    setPointClicked(point);  // Atualizando o ponto clicado
-  };
+    setPointClicked({
+      id: point.id,
+      latitude: point.latitude,
+      longitude: point.longitude,
+      timestamp: Date.now(), 
+    });  };
 
   if (points.length === 0) {
     return (
