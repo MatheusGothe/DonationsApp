@@ -21,6 +21,7 @@ export default function MapComponent({ userLocation }: MapProps) {
     selectingLocation,
     setSelectingLocation,
     setSelectedLocation,
+    selectedLocation,
     pointClicked,
   } = useDonationPoints();
   const { donationPoints: points } = useDonationPoints();
@@ -132,7 +133,7 @@ export default function MapComponent({ userLocation }: MapProps) {
         mapInstanceRef.current.remove();
       }
     };
-  }, [userLocation, toast]);
+  }, [userLocation]);
 
   const updateMarkers = useCallback(async () => {
     const map = mapInstanceRef.current;
@@ -195,6 +196,12 @@ export default function MapComponent({ userLocation }: MapProps) {
 
     mapContainer.style.cursor = selectingLocation ? "pointer" : "";
   }, [selectingLocation]);
+
+  useEffect(() => {
+    if(selectedLocation == null){
+        mapInstanceRef.current?.removeLayer(temporaryMarkerRef.current); 
+    }
+  },[selectedLocation])
 
   const goToUserLocation = () => {
     if (!userLocation || !mapInstanceRef.current) return;

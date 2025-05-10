@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useDonationPoints, type DonationType } from "./donation-point-context";
 import { MapPin } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { FormMessage } from "./formMessage";
 
 interface DonationPointFormProps {
   onComplete: () => void;
@@ -25,6 +26,7 @@ export default function DonationPointForm({ onComplete }: DonationPointFormProps
     latitude: 0,
     longitude: 0,
     openingHours: "",
+    errors: null
   });
 
   useEffect(() => {
@@ -44,14 +46,27 @@ export default function DonationPointForm({ onComplete }: DonationPointFormProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addDonationPoint(formData);
-    toast({ title: "Ponto adicionado com sucesso!" });
-    onComplete();
+    if(formData.latitude == 0){
+      setFormData({
+        ...formData,
+        errors: "Selecione um ponto no mapa"
+      })
+
+      setTimeout(() => {
+        setFormData({
+          ...formData,
+          errors: null
+        })
+      }, 3000)
+      
+      return
+    }
+   /* await addDonationPoint(formData);
+    toast({ title: "Ponto adicionado com sucesso!" });*/
+  //  onComplete();
   };
 
   const handleSelectLocation = () => {
-  //  toast({ title: "Clique no mapa para selecionar a localização." });
-  console.log('caiu')
     setSelectingLocation(true);
   };
 
@@ -161,6 +176,8 @@ export default function DonationPointForm({ onComplete }: DonationPointFormProps
           </div>
         </div>
       )}
+
+      {formData.errors && <FormMessage message={formData.errors} error={true} />}
 
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onComplete}>

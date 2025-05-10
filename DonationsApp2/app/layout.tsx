@@ -28,7 +28,7 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <ToastProvider>
           {children}
-          <Toaster />
+          <Toaster className="absolute z-50" />
         </ToastProvider>
       </body>
     </html>

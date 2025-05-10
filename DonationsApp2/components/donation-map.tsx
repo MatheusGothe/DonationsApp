@@ -13,7 +13,7 @@ export default function DonationMap() {
   const [userLocation, setUserLocation] = useState<GeolocationCoordinates | null>(null);
   const [showForm, setShowForm] = useState(false)
   const [activeFilter, setActiveFilter] = useState<string>("all")
-  const { donationPoints } = useDonationPoints()
+  const { donationPoints,selectedLocation,setSelectedLocation,setSelectingLocation,pointClicked,setPointClicked } = useDonationPoints()
 
   const filteredPoints =
     activeFilter === "all" ? donationPoints : donationPoints.filter((point) => point.type === activeFilter)
@@ -37,6 +37,12 @@ export default function DonationMap() {
         console.warn("Geolocalização não suportada neste navegador.");
       }
     }, []);  
+
+    const handleCancelClick = () => {
+      setShowForm(false)
+      setSelectedLocation(null)
+      console.log("localizaçao",selectedLocation)
+    }
   return (
     <div className="flex flex-col h-screen">
       <header className="bg-white border-b p-4 flex justify-between items-center">
@@ -69,7 +75,7 @@ export default function DonationMap() {
           {showForm ? (
             <div className="bg-white rounded-lg shadow p-4 mb-4">
               <h2 className="text-lg font-semibold mb-4">Cadastrar Novo Ponto</h2>
-              <DonationPointForm onComplete={() => setShowForm(false)} />
+              <DonationPointForm onComplete={() => handleCancelClick()} />
             </div>
           ) : null}
 
