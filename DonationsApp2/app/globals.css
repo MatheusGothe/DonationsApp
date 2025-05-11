@@ -80,3 +80,12 @@
   background: transparent;
   border: none;
 }
+
+.not-tailwind .p-multiselect {
+  all: revert;
+}
+
+.custom-select__control {
+  border-radius: calc(var(--radius) - 10px);
+}
+

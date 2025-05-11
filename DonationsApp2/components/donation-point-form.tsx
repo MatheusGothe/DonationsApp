@@ -9,14 +9,23 @@ import { useDonationPoints, type DonationType } from "./donation-point-context";
 import { MapPin } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { FormMessage } from "./formMessage";
+import { validateDonationPoint } from "@/lib/validators/validateDonationPoint";
+import { IMaskInput } from "react-imask";
+import makeAnimated from "react-select/animated";
+import OpeningDaysSelect from "./openingDaysSelect";
+import LocationInfo from "./LocationInfo";
 
 interface DonationPointFormProps {
   onComplete: () => void;
 }
 
-export default function DonationPointForm({ onComplete }: DonationPointFormProps) {
-  const { addDonationPoint, setSelectingLocation, selectedLocation } = useDonationPoints();
+export default function DonationPointForm({
+  onComplete,
+}: DonationPointFormProps) {
+  const { addDonationPoint, setSelectingLocation, selectedLocation } =
+    useDonationPoints();
   const { toast } = useToast();
+  const animatedComponents = makeAnimated();
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -25,8 +34,10 @@ export default function DonationPointForm({ onComplete }: DonationPointFormProps
     contactInfo: "",
     latitude: 0,
     longitude: 0,
-    openingHours: "",
-    errors: null
+    openingDays: [],
+    openingHours: "",  // Remover essa linha, pois não será mais usada
+    period: "",  // Novo campo para o período
+    errors: null,
   });
 
   useEffect(() => {
@@ -39,31 +50,25 @@ export default function DonationPointForm({ onComplete }: DonationPointFormProps
     }
   }, [selectedLocation]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(formData.latitude == 0){
-      setFormData({
-        ...formData,
-        errors: "Selecione um ponto no mapa"
-      })
-
-      setTimeout(() => {
-        setFormData({
-          ...formData,
-          errors: null
-        })
-      }, 3000)
-      
-      return
+    const validationError = validateDonationPoint(formData);
+    console.log(formData);
+    if (validationError) {
+      setFormData({ ...formData, errors: validationError });
+      setTimeout(() => setFormData({ ...formData, errors: null }), 3000);
+      return;
     }
-   /* await addDonationPoint(formData);
+    /* await addDonationPoint(formData);
     toast({ title: "Ponto adicionado com sucesso!" });*/
-  //  onComplete();
+    //  onComplete();
   };
 
   const handleSelectLocation = () => {
@@ -114,20 +119,42 @@ export default function DonationPointForm({ onComplete }: DonationPointFormProps
         onChange={handleChange}
         required
       />
-      <Input
+      <IMaskInput
+        mask="(00) 00000-0000"
         name="contactInfo"
         placeholder="Contato"
         value={formData.contactInfo}
         onChange={handleChange}
+        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
         required
       />
-      <Input
-        name="openingHours"
-        placeholder="Horário de funcionamento"
-        value={formData.openingHours}
-        onChange={handleChange}
-        required
+      <OpeningDaysSelect
+        value={formData.openingDays}
+        onChange={(values) =>
+          setFormData({ ...formData, openingDays: values })
+        }
       />
+
+      {/* Novo campo para o período de funcionamento */}
+      <RadioGroup
+        value={formData.period}
+        onValueChange={(val) =>
+          setFormData({ ...formData, period: val })
+        }
+      >
+        {["matutino", "vespertino", "ambos"].map((period) => (
+          <div key={period} className="flex items-center space-x-2">
+            <RadioGroupItem value={period} id={period} />
+            <label htmlFor={period}>
+              {period === "matutino"
+                ? "Matutino"
+                : period === "vespertino"
+                ? "Vespertino"
+                : "Ambos"}
+            </label>
+          </div>
+        ))}
+      </RadioGroup>
 
       <Button
         type="button"
@@ -139,45 +166,15 @@ export default function DonationPointForm({ onComplete }: DonationPointFormProps
       </Button>
 
       {formData.latitude !== 0 && formData.longitude !== 0 && (
-        <div className="space-y-2">
-          <div>
-            <label
-              htmlFor="latitude"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Latitude
-            </label>
-            <Input
-              id="latitude"
-              name="latitude"
-              value={formData.latitude.toFixed(5)}
-              onChange={handleChange}
-              disabled
-              placeholder="Latitude"
-              className="w-full"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="longitude"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Longitude
-            </label>
-            <Input
-              id="longitude"
-              name="longitude"
-              value={formData.longitude.toFixed(5)}
-              onChange={handleChange}
-              disabled
-              placeholder="Longitude"
-              className="w-full"
-            />
-          </div>
-        </div>
+        <LocationInfo
+          latitude={formData.latitude}
+          longitude={formData.longitude}
+        />
       )}
 
-      {formData.errors && <FormMessage message={formData.errors} error={true} />}
+      {formData.errors && (
+        <FormMessage message={formData.errors} error={true} />
+      )}
 
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onComplete}>
