@@ -8,11 +8,17 @@ import type { DonationPoint } from "@/components/donation-point-context"
 
 
 async function getDonationPoints(): Promise<DonationPoint[]> {
-  const snapshot = await getDocs(collection(db, "donationPoints"))
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as DonationPoint[]
+  const snapshot = await getDocs(collection(db, "donationPoints"));
+
+  return snapshot.docs.map(doc => {
+    const data = doc.data();
+    // Remover o campo createdAt ou qualquer outro que você não quer
+    const { createdAt, ...rest } = data;
+    return {
+      id: doc.id,
+      ...rest,  // Adiciona os dados restantes
+    };
+  }) as DonationPoint[];
 }
 
 export default function Home() {

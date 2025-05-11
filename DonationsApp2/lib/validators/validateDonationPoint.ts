@@ -8,7 +8,7 @@ interface DonationFormData {
     contactInfo: string;
     latitude: number;
     longitude: number;
-    openingHours: string;
+    period: string
   }
   
   export const validateDonationPoint = (data: DonationFormData): string | null => {
@@ -22,10 +22,9 @@ interface DonationFormData {
     if (!phoneRegex.test(data.contactInfo)) {
       return "Contato inválido. Use o formato (XX) XXXXX-XXXX.";
     }
-  
-    const openingHoursRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]\s?-\s?([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-    if (!openingHoursRegex.test(data.openingHours)) {
-      return "Horário inválido. Use o formato HH:MM - HH:MM.";
+    
+    if(data.period == null || data.period == ""){
+      return "Por favor, informe um turno de funcionamento.";
     }
   
     return null;

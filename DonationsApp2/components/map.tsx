@@ -6,6 +6,7 @@ import { MapPin } from "lucide-react";
 
 interface MapProps {
   userLocation?: GeolocationCoordinates | null;
+  points: any[]
 }
 
 const leafletRef = { current: null as typeof import("leaflet") | null };
@@ -15,16 +16,15 @@ const TRACESTACK_URL =
 const TRACESTACK_ATTRIB =
   '&copy; <a href="https://tracestrack.com/">Tracestrack</a> contributors | Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>';
 
-export default function MapComponent({ userLocation }: MapProps) {
+export default function MapComponent({ userLocation, points }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const {
     selectingLocation,
     setSelectingLocation,
     setSelectedLocation,
-    selectedLocation,
+    selectedLocation,                     
     pointClicked,
   } = useDonationPoints();
-  const { donationPoints: points } = useDonationPoints();
   const selectingLocationRef = useRef(selectingLocation);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
@@ -133,7 +133,7 @@ export default function MapComponent({ userLocation }: MapProps) {
         mapInstanceRef.current.remove();
       }
     };
-  }, [userLocation]);
+  }, []);
 
   const updateMarkers = useCallback(async () => {
     const map = mapInstanceRef.current;

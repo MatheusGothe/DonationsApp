@@ -35,8 +35,7 @@ export default function DonationPointForm({
     latitude: 0,
     longitude: 0,
     openingDays: [],
-    openingHours: "",  // Remover essa linha, pois não será mais usada
-    period: "",  // Novo campo para o período
+    period: "", // Novo campo para o período
     errors: null,
   });
 
@@ -60,14 +59,24 @@ export default function DonationPointForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationError = validateDonationPoint(formData);
-    console.log(formData);
     if (validationError) {
       setFormData({ ...formData, errors: validationError });
       setTimeout(() => setFormData({ ...formData, errors: null }), 3000);
       return;
     }
-    /* await addDonationPoint(formData);
-    toast({ title: "Ponto adicionado com sucesso!" });*/
+   
+    const { errors, ...pointData } = formData;
+    const success = await addDonationPoint(pointData);
+    if (success) {
+      toast({ title: "Ponto adicionado com sucesso!" });
+      onComplete();
+    } else {
+      setFormData({
+        ...formData,
+        errors: "Erro ao salvar ponto. Tente novamente.",
+      });
+    }
+    // toast({ title: "Ponto adicionado com sucesso!" });
     //  onComplete();
   };
 
@@ -130,17 +139,13 @@ export default function DonationPointForm({
       />
       <OpeningDaysSelect
         value={formData.openingDays}
-        onChange={(values) =>
-          setFormData({ ...formData, openingDays: values })
-        }
+        onChange={(values) => setFormData({ ...formData, openingDays: values })}
       />
 
       {/* Novo campo para o período de funcionamento */}
       <RadioGroup
         value={formData.period}
-        onValueChange={(val) =>
-          setFormData({ ...formData, period: val })
-        }
+        onValueChange={(val) => setFormData({ ...formData, period: val })}
       >
         {["matutino", "vespertino", "ambos"].map((period) => (
           <div key={period} className="flex items-center space-x-2">

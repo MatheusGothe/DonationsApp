@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
-
+import { addPoint,removePoint } from '@/services/pointService.js';
 export type DonationType = "food" | "clothes" | "both";
 
 interface PointClicked {
@@ -39,6 +39,7 @@ interface DonationPointContextType {
   pointClicked: PointClicked | null;
   setPointClicked: (point: PointClicked | null) => void;
   registerMap: (map: L.Map) => void;
+  removeDonationPoint: (id: string) => void;
 }
 
 const DonationPointContext = createContext<DonationPointContextType | undefined>(undefined);
@@ -50,14 +51,35 @@ export const DonationPointProvider = ({ children, initialPoints = [] }: { childr
   const [pointClicked, setPointClicked] = useState<PointClicked | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
-  const addDonationPoint = (point: Omit<DonationPoint, 'id'>) => {
-    const newPoint: DonationPoint = { ...point, id: Math.random().toString(36).slice(2, 9) };
-    setDonationPoints(prev => [...prev, newPoint]);
+  const addDonationPoint = async(point: Omit<DonationPoint, 'id'>) => {
+    
+    try {
+      const id = await addPoint(point); // função que grava no Firebase e retorna o id
+      const newPoint: DonationPoint = { ...point, id };
+      setDonationPoints(prev => [...prev, newPoint]);
+      return true;
+    } catch (error) {
+      console.error("Erro ao adicionar ponto no Firebase:", error);
+      return false;
+    }
   };
 
   const registerMap = useCallback((map: L.Map) => {
     mapRef.current = map;
   }, []);
+
+  const removeDonationPoint = async(id: string) => {
+    
+    try {
+      const response = await removePoint(id);
+      setDonationPoints(prev => prev.filter(point => point.id !== id));
+      return response
+
+    } catch (error) {
+      console.error("Erro ao remover ponto no Firebase:", error);
+    }
+
+  };
 
 
   return (
@@ -71,7 +93,8 @@ export const DonationPointProvider = ({ children, initialPoints = [] }: { childr
         setSelectedLocation,
         pointClicked,
         setPointClicked,
-        registerMap
+        registerMap,
+        removeDonationPoint
       }}
     >
       {children}
