@@ -13,7 +13,7 @@ import { validateDonationPoint } from "@/lib/validators/validateDonationPoint";
 import { IMaskInput } from "react-imask";
 import makeAnimated from "react-select/animated";
 import OpeningDaysSelect from "./openingDaysSelect";
-import LocationInfo from "./LocationInfo";
+import LocationInfo from "./locationInfo";
 
 interface DonationPointFormProps {
   onComplete: () => void;

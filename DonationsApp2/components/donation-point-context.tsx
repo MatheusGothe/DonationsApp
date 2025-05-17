@@ -40,6 +40,8 @@ interface DonationPointContextType {
   setPointClicked: (point: PointClicked | null) => void;
   registerMap: (map: L.Map) => void;
   removeDonationPoint: (id: string) => void;
+  userLocation: GeolocationCoordinates | null
+  setUserLocation: (loc: GeolocationCoordinates | null) => void
 }
 
 const DonationPointContext = createContext<DonationPointContextType | undefined>(undefined);
@@ -49,6 +51,7 @@ export const DonationPointProvider = ({ children, initialPoints = [] }: { childr
   const [selectingLocation, setSelectingLocation] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [pointClicked, setPointClicked] = useState<PointClicked | null>(null);
+  const [userLocation, setUserLocation] = useState<GeolocationCoordinates | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
   const addDonationPoint = async(point: Omit<DonationPoint, 'id'>) => {
@@ -94,7 +97,9 @@ export const DonationPointProvider = ({ children, initialPoints = [] }: { childr
         pointClicked,
         setPointClicked,
         registerMap,
-        removeDonationPoint
+        removeDonationPoint,
+        userLocation,
+        setUserLocation
       }}
     >
       {children}

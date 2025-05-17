@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { MapPin, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -10,23 +10,28 @@ import Map from "./map"
 import { useDonationPoints } from "./donation-point-context"
 
 export default function DonationMap() {
-  const [userLocation, setUserLocation] = useState<GeolocationCoordinates | null>(null);
   const [showForm, setShowForm] = useState(false)
   const [activeFilter, setActiveFilter] = useState<string>("all")
-  const { donationPoints,selectedLocation,setSelectedLocation,setSelectingLocation,pointClicked,setPointClicked } = useDonationPoints()
-
+  const { userLocation,setUserLocation,donationPoints,selectedLocation,setSelectedLocation,setSelectingLocation,pointClicked,setPointClicked } = useDonationPoints()
+  const [locationResponse, setLocationResponse] = useState<boolean>(false);
   const filteredPoints =
     activeFilter === "all" ? donationPoints : donationPoints.filter((point) => point.type === activeFilter)
+  
 
-    useEffect(() => {
+    const requestUserLocation = () => {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
+            console.log("Localização obtida:", position.coords);
             setUserLocation(position.coords);
-            console.log(position)
+            setLocationResponse(true)
+
           },
           (error) => {
-            console.error("Erro ao obter localização:", error);
+            console.log("Erro ao obter localização:", error);
+            setUserLocation(null);
+            setLocationResponse(true)
+
           },
           {
             enableHighAccuracy: true,
@@ -36,7 +41,11 @@ export default function DonationMap() {
       } else {
         console.warn("Geolocalização não suportada neste navegador.");
       }
-    }, []);  
+    };
+    useEffect(() => {
+      requestUserLocation()
+    }, []);
+
 
     const handleCancelClick = () => {
       setShowForm(false)
@@ -71,7 +80,6 @@ export default function DonationMap() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-
           {showForm ? (
             <div className="bg-white rounded-lg shadow p-4 mb-4">
               <h2 className="text-lg font-semibold mb-4">Cadastrar Novo Ponto</h2>
@@ -83,8 +91,8 @@ export default function DonationMap() {
         </div>
 
         <div className="flex-1 h-full">
-          {userLocation && (
-            <Map points={filteredPoints} userLocation={userLocation} />
+          {locationResponse && (
+            <Map points={filteredPoints} requestUserLocation={requestUserLocation} />
           )}
         </div>
       </div>
