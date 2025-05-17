@@ -14,6 +14,11 @@ import { IMaskInput } from "react-imask";
 import makeAnimated from "react-select/animated";
 import OpeningDaysSelect from "./openingDaysSelect";
 import LocationInfo from "./locationInfo";
+import lottieJson from "@/public/Animations/loadingAnimation.json";
+import dynamic from "next/dynamic";
+
+// importa Lottie de forma dinâmica (sem SSR)
+const Lottie = dynamic(() => import("react-lottie-player"), { ssr: false });
 
 interface DonationPointFormProps {
   onComplete: () => void;
@@ -25,6 +30,7 @@ export default function DonationPointForm({
   const { addDonationPoint, setSelectingLocation, selectedLocation } =
     useDonationPoints();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const animatedComponents = makeAnimated();
   const [formData, setFormData] = useState({
     name: "",
@@ -64,9 +70,11 @@ export default function DonationPointForm({
       setTimeout(() => setFormData({ ...formData, errors: null }), 3000);
       return;
     }
-   
+
     const { errors, ...pointData } = formData;
+    setLoading(true);
     const success = await addDonationPoint(pointData);
+    setLoading(false);
     if (success) {
       toast({ title: "Ponto adicionado com sucesso!" });
       onComplete();
@@ -175,6 +183,17 @@ export default function DonationPointForm({
           latitude={formData.latitude}
           longitude={formData.longitude}
         />
+      )}
+
+      {loading && (
+        <div className="fixed inset-0 bg-black/50 flex h-full items-center justify-center z-[9999]">
+          <Lottie
+            loop
+            animationData={lottieJson}
+            play
+            style={{ width: 150, height: 150 }}
+          />
+        </div>
       )}
 
       {formData.errors && (

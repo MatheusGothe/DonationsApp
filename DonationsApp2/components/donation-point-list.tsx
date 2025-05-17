@@ -109,8 +109,11 @@ export default function DonationPointList({ points }: DonationPointListProps) {
         ))}
       </div>
 
+
+
       {/* Um único AlertDialog condicional fora do .map */}
        {selectedPointToDelete && (
+  // <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
     <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-xl">
       <h2 className="text-lg font-semibold mb-2">Deseja excluir este ponto?</h2>
