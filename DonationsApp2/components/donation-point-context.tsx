@@ -31,6 +31,7 @@ interface Location {
 
 interface DonationPointContextType {
   donationPoints: DonationPoint[];
+  setDonationPoints: (points: DonationPoint[]) => void;
   addDonationPoint: (point: Omit<DonationPoint, 'id'>) => void;
   selectingLocation: boolean;
   setSelectingLocation: (value: boolean) => void;
@@ -89,6 +90,7 @@ export const DonationPointProvider = ({ children, initialPoints = [] }: { childr
     <DonationPointContext.Provider
       value={{
         donationPoints,
+        setDonationPoints,
         addDonationPoint,
         selectingLocation,
         setSelectingLocation,

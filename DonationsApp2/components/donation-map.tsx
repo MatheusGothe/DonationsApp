@@ -1,64 +1,82 @@
-"use client"
+"use client";
 
-import { use, useEffect, useState } from "react"
-import { MapPin, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import DonationPointList from "./donation-point-list"
-import DonationPointForm from "./donation-point-form"
-import Map from "./map"
-import { useDonationPoints } from "./donation-point-context"
+import { useEffect, useState } from "react";
+import { MapPin, Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DonationPointList from "./donation-point-list";
+import DonationPointForm from "./donation-point-form";
+import Map from "./map";
+import { useDonationPoints } from "./donation-point-context";
+import { Input } from "./ui/input";
 
 export default function DonationMap() {
-  const [showForm, setShowForm] = useState(false)
-  const [activeFilter, setActiveFilter] = useState<string>("all")
+  const [showForm, setShowForm] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [searchPoints, setSearchPoints] = useState<string>("");
+
   const {
     userLocation,
     setUserLocation,
-    donationPoints,
+    donationPoints,       // lista original vinda do contexto
     selectedLocation,
     setSelectedLocation,
     setSelectingLocation,
     pointClicked,
     setPointClicked,
-  } = useDonationPoints()
-  const [locationResponse, setLocationResponse] = useState<boolean>(false)
-  const filteredPoints =
-    activeFilter === "all"
-      ? donationPoints
-      : donationPoints.filter((point) => point.type === activeFilter)
+  } = useDonationPoints();
+
+  const [filteredPoints, setFilteredPoints] = useState(donationPoints);
+  const [locationResponse, setLocationResponse] = useState<boolean>(false);
+
+  // Atualiza filteredPoints sempre que donationPoints, activeFilter ou searchPoints mudam
+  useEffect(() => {
+    let points = donationPoints;
+
+    if (activeFilter !== "all") {
+      points = points.filter((point) => point.type === activeFilter);
+    }
+
+    if (searchPoints.trim().length > 0) {
+      points = points.filter((point) =>
+        point.name.toLowerCase().includes(searchPoints.toLowerCase())
+      );
+    }
+
+    setFilteredPoints(points);
+  }, [donationPoints, activeFilter, searchPoints]);
 
   const requestUserLocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          console.log("Localização obtida:", position.coords)
-          setUserLocation(position.coords)
-          setLocationResponse(true)
+          console.log("Localização obtida:", position.coords);
+          setUserLocation(position.coords);
+          setLocationResponse(true);
         },
         (error) => {
-          console.log("Erro ao obter localização:", error)
-          setUserLocation(null)
-          setLocationResponse(true)
+          console.log("Erro ao obter localização:", error);
+          setUserLocation(null);
+          setLocationResponse(true);
         },
         {
           enableHighAccuracy: true,
           timeout: 10000,
         }
-      )
+      );
     } else {
-      console.warn("Geolocalização não suportada neste navegador.")
+      console.warn("Geolocalização não suportada neste navegador.");
     }
-  }
+  };
+
   useEffect(() => {
-    requestUserLocation()
-  }, [])
+    requestUserLocation();
+  }, []);
 
   const handleCancelClick = () => {
-    setShowForm(false)
-    setSelectedLocation(null)
-    console.log("localizaçao", selectedLocation)
-  }
+    setShowForm(false);
+    setSelectedLocation(null);
+  };
 
   return (
     <div className="flex flex-col h-auto">
@@ -79,30 +97,39 @@ export default function DonationMap() {
       <div className="flex flex-col md:flex-row h-full">
         {/* Conteúdo esquerdo (lista + form) - mobile fica acima do mapa, mas no md fica lado a lado */}
         <div className="w-full md:w-1/3 p-4 overflow-y-auto order-1 md:order-1">
-          <Tabs defaultValue="all" className="mb-4">
+          <Tabs
+            defaultValue="all"
+            className="mb-4"
+            onValueChange={(value) => setActiveFilter(value)}
+          >
             <TabsList className="grid grid-cols-3">
-              <TabsTrigger value="all" onClick={() => setActiveFilter("all")}>
-                Todos
-              </TabsTrigger>
-              <TabsTrigger value="food" onClick={() => setActiveFilter("food")}>
-                Comida
-              </TabsTrigger>
-              <TabsTrigger
-                value="clothes"
-                onClick={() => setActiveFilter("clothes")}
-              >
-                Roupas
-              </TabsTrigger>
+              <TabsTrigger value="all">Todos</TabsTrigger>
+              <TabsTrigger value="food">Comida</TabsTrigger>
+              <TabsTrigger value="clothes">Roupas</TabsTrigger>
             </TabsList>
           </Tabs>
-
+          <div className="relative mb-2">
+            <Input
+              value={searchPoints}
+              onChange={(e) => setSearchPoints(e.target.value)}
+              type="text"
+              placeholder="Pesquisar pontos"
+              className="pl-10 pr-3 py-2 border rounded w-full"
+            />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
+            />
+          </div>
           <DonationPointList points={filteredPoints} />
 
           {/* Formulário aparece abaixo da lista em mobile e md */}
           {showForm && (
             <div className="bg-white rounded-lg shadow p-4 mt-4">
-              <h2 className="text-lg font-semibold mb-4">Cadastrar Novo Ponto</h2>
-              <DonationPointForm onComplete={() => handleCancelClick()} />
+              <h2 className="text-lg font-semibold mb-4">
+                Cadastrar Novo Ponto
+              </h2>
+              <DonationPointForm onComplete={handleCancelClick} />
             </div>
           )}
         </div>
@@ -119,5 +146,5 @@ export default function DonationMap() {
         </div>
       </div>
     </div>
-  )
+  );
 }
