@@ -237,7 +237,7 @@ export default function MapComponent({ points,requestUserLocation }: MapProps) {
 
   return (
     <div className="relative w-full h-full">
-      <div ref={mapRef} className={`w-full h-full`} />
+      <div ref={mapRef} className={`w-full min-h-[700px] h-auto`} />
     </div>
   );
 }
