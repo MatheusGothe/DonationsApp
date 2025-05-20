@@ -108,6 +108,8 @@ export default function DonationMap() {
               <TabsTrigger value="clothes">Roupas</TabsTrigger>
             </TabsList>
           </Tabs>
+          {!showForm && (
+            <>
           <div className="relative mb-2">
             <Input
               value={searchPoints}
@@ -122,6 +124,8 @@ export default function DonationMap() {
             />
           </div>
           <DonationPointList points={filteredPoints} />
+            </>
+          )}
 
           {/* Formulário aparece abaixo da lista em mobile e md */}
           {showForm && (
@@ -135,7 +139,7 @@ export default function DonationMap() {
         </div>
 
         {/* Mapa */}
-        <div className="flex-1 h-full order-2 md:order-2">
+        <div className="flex-1 h-screen order-2 md:order-2">
           {locationResponse && (
             <Map
               points={filteredPoints}
