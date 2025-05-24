@@ -6,7 +6,7 @@ import { MapPin } from "lucide-react";
 
 interface MapProps {
   userLocation?: GeolocationCoordinates | null;
-  points: any[]
+  points: any[];
   requestUserLocation: () => void;
 }
 
@@ -21,13 +21,16 @@ const TRACESTACK_URL =
 const TRACESTACK_ATTRIB =
   '&copy; <a href="https://tracestrack.com/">Tracestrack</a> contributors | Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>';
 */
-export default function MapComponent({ points,requestUserLocation }: MapProps) {
+export default function MapComponent({
+  points,
+  requestUserLocation,
+}: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const {
     selectingLocation,
     setSelectingLocation,
     setSelectedLocation,
-    selectedLocation,                     
+    selectedLocation,
     pointClicked,
     userLocation,
   } = useDonationPoints();
@@ -53,33 +56,32 @@ export default function MapComponent({ points,requestUserLocation }: MapProps) {
   useEffect(() => {
     const initMap = async () => {
       const L = await loadLeaflet();
-  
+
       // Define coordenadas padrão
       const defaultCoords = { latitude: -20.27105, longitude: -40.28518 };
-  
+
       // Usa a localização do usuário se disponível, senão usa padrão
       const { latitude, longitude } = userLocation ?? defaultCoords;
-  
+
       if (!mapRef.current || mapInstanceRef.current) return;
 
       const bounds = L.latLngBounds(
-        L.latLng(-90, -180),  // latitude mínima, longitude mínima (sudoeste)
-        L.latLng(90, 180)     // latitude máxima, longitude máxima (nordeste)
+        L.latLng(-90, -180), // latitude mínima, longitude mínima (sudoeste)
+        L.latLng(90, 180) // latitude máxima, longitude máxima (nordeste)
       );
-      
-      
-      const map = L.map(mapRef.current, { 
+
+      const map = L.map(mapRef.current, {
         minZoom: 1, // ou o mínimo que você quiser
         maxBounds: bounds,
         maxBoundsViscosity: 1.0, // trava o mapa para não sair dos bounds
       }).setView([latitude, longitude], 5); // zoom inicial que quiser
-      
 
-  
-      L.tileLayer(TRACESTACK_URL, { attribution: TRACESTACK_ATTRIB }).addTo(map);
-  
+      L.tileLayer(TRACESTACK_URL, { attribution: TRACESTACK_ATTRIB }).addTo(
+        map
+      );
+
       mapInstanceRef.current = map;
-  
+
       // Adiciona marcador se houver localização do usuário
       if (userLocation) {
         userLocationMarkerRef.current = L.marker([latitude, longitude], {
@@ -92,39 +94,39 @@ export default function MapComponent({ points,requestUserLocation }: MapProps) {
           .addTo(mapInstanceRef.current);
       }
       // Botão para centralizar na localização do usuário
-        const button = L.control({ position: "topleft" });
-        button.onAdd = () => {
-          const btn = L.DomUtil.create("button", "leaflet-control custom-btn");
-          btn.classList.add(
-            "p-2",
-            "bg-white",
-            "shadow",
-            "rounded-md",
-            "cursor-pointer"
-          );
-          btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 8c0 3.31 3.25 6.76 7 10 3.75-3.24 7-6.69 7-10 0-2.87-3.13-6-7-6zm0 8c-1.1 0-2-.9-2-2s.9-2 2-2s2 .9 2 2-.9 2-2 2z"></path></svg>`;
-          btn.onclick = () => goToUserLocation(map);
-          return btn;
-        };
-        button.addTo(mapInstanceRef.current);
-    
-        const style = document.createElement("style");
-        style.innerHTML = `
+      const button = L.control({ position: "topleft" });
+      button.onAdd = () => {
+        const btn = L.DomUtil.create("button", "leaflet-control custom-btn");
+        btn.classList.add(
+          "p-2",
+          "bg-white",
+          "shadow",
+          "rounded-md",
+          "cursor-pointer"
+        );
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 8c0 3.31 3.25 6.76 7 10 3.75-3.24 7-6.69 7-10 0-2.87-3.13-6-7-6zm0 8c-1.1 0-2-.9-2-2s.9-2 2-2s2 .9 2 2-.9 2-2 2z"></path></svg>`;
+        btn.onclick = () => goToUserLocation(map);
+        return btn;
+      };
+      button.addTo(mapInstanceRef.current);
+
+      const style = document.createElement("style");
+      style.innerHTML = `
           .leaflet-control.custom-btn {
             cursor: pointer !important;
           }
         `;
-        document.head.appendChild(style);
-  
+      document.head.appendChild(style);
+
       map.on("click", (e: L.LeafletMouseEvent) => {
         if (selectingLocationRef.current) {
           setSelectedLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
           setSelectingLocation(false);
-  
+
           if (temporaryMarkerRef.current) {
             mapInstanceRef.current?.removeLayer(temporaryMarkerRef.current);
           }
-  
+
           temporaryMarkerRef.current = L.marker([e.latlng.lat, e.latlng.lng], {
             icon: L.icon({
               iconUrl: "/gps.png",
@@ -136,22 +138,21 @@ export default function MapComponent({ points,requestUserLocation }: MapProps) {
             .openPopup();
         }
       });
-  
+
       await updateMarkers();
-      if(userLocation){
+      if (userLocation) {
         goToUserLocation();
       }
     };
-  
+
     initMap();
-  
+
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
       }
     };
-  }, []); 
-  
+  }, []);
 
   const updateMarkers = useCallback(async () => {
     const map = mapInstanceRef.current;
@@ -187,7 +188,6 @@ export default function MapComponent({ points,requestUserLocation }: MapProps) {
         markersRef.current[point.id] = marker;
       }
     });
-
   }, [points]);
 
   useEffect(() => {
@@ -208,14 +208,14 @@ export default function MapComponent({ points,requestUserLocation }: MapProps) {
   }, [selectingLocation]);
 
   useEffect(() => {
-    if(selectedLocation == null){
-        mapInstanceRef.current?.removeLayer(temporaryMarkerRef.current); 
+    if (selectedLocation == null) {
+      mapInstanceRef.current?.removeLayer(temporaryMarkerRef.current);
     }
-  },[selectedLocation])
+  }, [selectedLocation]);
 
   const goToUserLocation = () => {
-      console.log('pa ta caindo aq/????')
-    if (!userLocation || !mapInstanceRef.current){
+    console.log("pa ta caindo aq/????");
+    if (!userLocation || !mapInstanceRef.current) {
       toast({
         title: "Permissão de localização necessária",
         description:
@@ -236,8 +236,11 @@ export default function MapComponent({ points,requestUserLocation }: MapProps) {
   };
 
   return (
-    <div className="relative w-full h-full">
-      <div ref={mapRef} className={`w-full min-h-[700px] h-auto`} />
+    <div className="relative w-full h-auto">
+      <div
+        ref={mapRef}
+        className="w-full h-[400px] sm:h-[400px] md:h-[550px]"
+      />
     </div>
   );
 }

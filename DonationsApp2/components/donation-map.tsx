@@ -18,7 +18,7 @@ export default function DonationMap() {
   const {
     userLocation,
     setUserLocation,
-    donationPoints,       // lista original vinda do contexto
+    donationPoints, // lista original vinda do contexto
     selectedLocation,
     setSelectedLocation,
     setSelectingLocation,
@@ -79,7 +79,7 @@ export default function DonationMap() {
   };
 
   return (
-    <div className="flex flex-col h-auto">
+    <div className="flex flex-col  md:h-[650px]">
       <header className="bg-white border-b p-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <MapPin className="h-6 w-6 text-green-600" />
@@ -94,36 +94,42 @@ export default function DonationMap() {
         </Button>
       </header>
 
-      <div className="flex flex-col md:flex-row h-full">
+      <div className="flex flex-col md:h-[550px] md:flex-row  ">
         {/* Conteúdo esquerdo (lista + form) - mobile fica acima do mapa, mas no md fica lado a lado */}
-        <div className="w-full md:w-1/3 p-4 overflow-y-auto order-1 md:order-1">
+        <div className="w-full md:w-1/3 md:h-[550px] h-full p-4 overflow-y-auto order-2 md:order-1">
           <Tabs
             defaultValue="all"
             className="mb-4"
             onValueChange={(value) => setActiveFilter(value)}
           >
             <TabsList className="grid grid-cols-3">
-              <TabsTrigger value="all">Todos</TabsTrigger>
-              <TabsTrigger value="food">Comida</TabsTrigger>
-              <TabsTrigger value="clothes">Roupas</TabsTrigger>
+              <TabsTrigger disabled={showForm} value="all">
+                Todos
+              </TabsTrigger>
+              <TabsTrigger disabled={showForm} value="food">
+                Comida
+              </TabsTrigger>
+              <TabsTrigger disabled={showForm} value="clothes">
+                Roupas
+              </TabsTrigger>
             </TabsList>
           </Tabs>
           {!showForm && (
             <>
-          <div className="relative mb-2">
-            <Input
-              value={searchPoints}
-              onChange={(e) => setSearchPoints(e.target.value)}
-              type="text"
-              placeholder="Pesquisar pontos"
-              className="pl-10 pr-3 py-2 border rounded w-full"
-            />
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={20}
-            />
-          </div>
-          <DonationPointList points={filteredPoints} />
+              <div className="relative mb-2 h-auto">
+                <Input
+                  value={searchPoints}
+                  onChange={(e) => setSearchPoints(e.target.value)}
+                  type="text"
+                  placeholder="Pesquisar pontos"
+                  className="pl-10 pr-3 py-2 border rounded w-full"
+                />
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+              </div>
+              <DonationPointList points={filteredPoints} />
             </>
           )}
 
@@ -139,7 +145,7 @@ export default function DonationMap() {
         </div>
 
         {/* Mapa */}
-        <div className="flex-1 h-screen order-2 md:order-2">
+        <div className="flex-1 h-[400px] md:h-screen lg:h-screen  order-1 md:order-2">
           {locationResponse && (
             <Map
               points={filteredPoints}

@@ -93,7 +93,11 @@ export default function DonationPointForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-y-4 "
+    >
+      {" "}
       <Input
         name="name"
         placeholder="Nome do local"
@@ -108,7 +112,6 @@ export default function DonationPointForm({
         onChange={handleChange}
         required
       />
-
       <RadioGroup
         value={formData.type}
         onValueChange={(val) =>
@@ -128,7 +131,6 @@ export default function DonationPointForm({
           </div>
         ))}
       </RadioGroup>
-
       <Textarea
         name="description"
         placeholder="Descrição"
@@ -149,7 +151,6 @@ export default function DonationPointForm({
         value={formData.openingDays}
         onChange={(values) => setFormData({ ...formData, openingDays: values })}
       />
-
       {/* Novo campo para o período de funcionamento */}
       <RadioGroup
         value={formData.period}
@@ -168,7 +169,6 @@ export default function DonationPointForm({
           </div>
         ))}
       </RadioGroup>
-
       <Button
         type="button"
         onClick={handleSelectLocation}
@@ -177,14 +177,12 @@ export default function DonationPointForm({
         <MapPin className="h-4 w-4" />
         Selecionar Localização no Mapa
       </Button>
-
       {formData.latitude !== 0 && formData.longitude !== 0 && (
         <LocationInfo
           latitude={formData.latitude}
           longitude={formData.longitude}
         />
       )}
-
       {loading && (
         <div className="fixed inset-0 bg-black/50 flex h-full items-center justify-center z-[9999]">
           <Lottie
@@ -195,11 +193,9 @@ export default function DonationPointForm({
           />
         </div>
       )}
-
       {formData.errors && (
         <FormMessage message={formData.errors} error={true} />
       )}
-
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onComplete}>
           Cancelar
