@@ -91,7 +91,7 @@ export default function DonationPointList({ points }: DonationPointListProps) {
                 </div>
               </div>
               <CardDescription className="flex items-center gap-1 text-sm">
-                <MapPin className="h-3 w-3" />
+                <MapPin className="h-4 w-4 flex-shrink-0" />
                 {point.address}
               </CardDescription>
             </CardHeader>

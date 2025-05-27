@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useDonationPoints, type DonationType } from "./donation-point-context";
-import { MapPin } from "lucide-react";
+import { Clock, MapPin } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { FormMessage } from "./formMessage";
 import { validateDonationPoint } from "@/lib/validators/validateDonationPoint";
@@ -42,6 +42,8 @@ export default function DonationPointForm({
     longitude: 0,
     openingDays: [],
     period: "", // Novo campo para o período
+    openingHourStart: "", // novo campo
+    openingHourEnd: "", // novo campo
     errors: null,
   });
 
@@ -93,10 +95,7 @@ export default function DonationPointForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-y-4 "
-    >
+    <form onSubmit={handleSubmit} className="flex flex-col gap-y-4 ">
       {" "}
       <Input
         name="name"
@@ -152,23 +151,30 @@ export default function DonationPointForm({
         onChange={(values) => setFormData({ ...formData, openingDays: values })}
       />
       {/* Novo campo para o período de funcionamento */}
-      <RadioGroup
-        value={formData.period}
-        onValueChange={(val) => setFormData({ ...formData, period: val })}
-      >
-        {["matutino", "vespertino", "ambos"].map((period) => (
-          <div key={period} className="flex items-center space-x-2">
-            <RadioGroupItem value={period} id={period} />
-            <label htmlFor={period}>
-              {period === "matutino"
-                ? "Matutino"
-                : period === "vespertino"
-                ? "Vespertino"
-                : "Ambos"}
-            </label>
-          </div>
-        ))}
-      </RadioGroup>
+      <label className="text-sm font-medium text-gray-700">
+        Horário de Funcionamento
+      </label>
+      <div className="flex flex-row justify-between">
+        <Input
+          type="time"
+          name="openingHourStart"
+          value={formData.openingHourStart}
+          onChange={handleChange}
+          required
+          className="w-[40%] ml-0"
+        />
+        <div className="flex align-center justify-center">
+          <span className="self-center">até</span>
+        </div>
+        <Input
+          type="time"
+          name="openingHourEnd"
+          value={formData.openingHourEnd}
+          onChange={handleChange}
+          required
+          className="w-[40%]"
+        />
+      </div>
       <Button
         type="button"
         onClick={handleSelectLocation}
