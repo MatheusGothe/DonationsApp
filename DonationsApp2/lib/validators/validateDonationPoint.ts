@@ -8,6 +8,7 @@ interface DonationFormData {
   contactInfo: string;
   openingHourStart: string;
   openingHourEnd: string;
+  openingDays: string[];
   latitude: number;
   longitude: number;
   period: string;
@@ -21,6 +22,10 @@ export const validateDonationPoint = (
 
   const startTotalMinutes = startHour * 60 + startMinute;
   const endTotalMinutes = endHour * 60 + endMinute;
+
+  if (!data.openingDays || data.openingDays.length === 0) {
+    return "Informe pelo menos um dia de funcionamento.";
+  }
 
   if (data.latitude === 0 || data.longitude === 0) {
     return "Selecione um ponto no mapa.";

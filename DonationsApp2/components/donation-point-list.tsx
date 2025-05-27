@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { formatOpeningHours } from "@/lib/formatOpeningHours";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -30,7 +31,8 @@ interface DonationPointListProps {
 
 export default function DonationPointList({ points }: DonationPointListProps) {
   const { setPointClicked, removeDonationPoint } = useDonationPoints();
-  const [selectedPointToDelete, setSelectedPointToDelete] = useState<DonationPoint | null>(null);
+  const [selectedPointToDelete, setSelectedPointToDelete] =
+    useState<DonationPoint | null>(null);
 
   const handleCardClick = (point: DonationPoint) => {
     setPointClicked({
@@ -98,8 +100,12 @@ export default function DonationPointList({ points }: DonationPointListProps) {
             <CardContent>
               <p className="text-sm mb-2">{point.description}</p>
               <div className="text-xs text-gray-500 flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {point.openingHours}
+                <Clock className="h-3 w-3 flex-shrink-0" />
+                {formatOpeningHours(
+                  point.openingDays,
+                  point.openingHourStart,
+                  point.openingHourEnd
+                )}
               </div>
               <div className="text-xs text-gray-500 mt-1">
                 Contato: {point.contactInfo}
@@ -109,35 +115,35 @@ export default function DonationPointList({ points }: DonationPointListProps) {
         ))}
       </div>
 
-
-
       {/* Um único AlertDialog condicional fora do .map */}
-       {selectedPointToDelete && (
-  // <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-    <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-xl">
-      <h2 className="text-lg font-semibold mb-2">Deseja excluir este ponto?</h2>
-      <p className="text-sm text-gray-600 mb-4">
-        Esta ação não poderá ser desfeita. O ponto será removido permanentemente.
-      </p>
-      <div className="flex justify-end gap-2">
-        <button
-          className="px-4 py-2 rounded-md border text-gray-700 hover:bg-gray-100"
-          onClick={() => setSelectedPointToDelete(null)}
-        >
-          Cancelar
-        </button>
-        <button
-          className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600"
-          onClick={handleDelete}
-        >
-          Confirmar
-        </button>
-      </div>
-    </div>
-  </div>
-)} 
-
+      {selectedPointToDelete && (
+        // <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-xl">
+            <h2 className="text-lg font-semibold mb-2">
+              Deseja excluir este ponto?
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Esta ação não poderá ser desfeita. O ponto será removido
+              permanentemente.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 rounded-md border text-gray-700 hover:bg-gray-100"
+                onClick={() => setSelectedPointToDelete(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600"
+                onClick={handleDelete}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
