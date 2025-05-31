@@ -7,7 +7,7 @@ import { DonationPointProvider } from "@/components/donation-point-context";
 import type { DonationPoint } from "@/components/donation-point-context";
 
 async function getDonationPoints(): Promise<DonationPoint[]> {
-  const snapshot = await getDocs(collection(db, process.env.NEXT_PUBLIC_FIREBASE_COLLECTION));
+  const snapshot = await getDocs(collection(db, 'donationPoints'));
 
   return snapshot.docs.map((doc) => {
     const data = doc.data();

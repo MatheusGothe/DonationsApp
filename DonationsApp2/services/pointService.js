@@ -3,7 +3,7 @@ import { db } from "@/lib/firebase"; // ajuste esse caminho conforme seu projeto
 
  const addPoint = async (point) => {
   try {
-    const docRef = await addDoc(collection(db,process.env.NEXT_PUBLIC_FIREBASE_COLLECTION), {
+    const docRef = await addDoc(collection(db,'donationPoints'), {
       ...point,
       createdAt: Timestamp.now(), // opcional
     });
@@ -18,7 +18,7 @@ import { db } from "@/lib/firebase"; // ajuste esse caminho conforme seu projeto
 const removePoint = async(pointId) => {
 
   try {
-    await deleteDoc(doc(db, process.env.NEXT_PUBLIC_FIREBASE_COLLECTION, pointId));
+    await deleteDoc(doc(db,'donationPoints', pointId));
     console.log("Ponto removido com sucesso!");
   } catch (error) {
     console.error("Erro ao remover ponto:", error);
