@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "donationsapp-7bdd4",
+  "private_key_id": "a53b7c2c57efe2fa3faee0c8997aa89962aa2ead",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDi5Cu/+dYP2Ujr\nclyzYz3R7o+8yhBGr84uhjREBBgxUzJqNS9hhg8KKNNL8N0HdPIl4+dTx+Ez2M5Q\ndZgrYMAWcLX9Kv8iaZo91387/qdjzgoGEXWKZlspRXjb80nPtpmZQMYp0BtFVAVd\nsV0+hjMwCsNND5jE0GjSPGvc2GGWjBLi6XoX2iKyyaSMAmVJI+9e55Jeekf5/FeJ\ntDgmKAxhyNJbilJ9jJeebZJVeGV/fJ1HFXajU6C6+MK260mQPSaNDU0UC4Hbsr6T\nDjsPtte9OW+9KkXEE2OS956Kh1XMtDn6GRi29iVgSVVKMHEwmp80rSSenloQJI6G\nEhIECIXHAgMBAAECggEAAx7RlYe9MIBmWXBJkmfnlDkRbsmDXjZYcP4znROk6wGV\n9pjqp6MtPySTOaqeTeOUvqY8o/LpM5sTdCZ00cUqz/hns0hUJq0qSHZKGCWAYJNh\nayx47WnEU7d0Fr9bce+05xP7IlZKMvzIrDa5WWi7LsBvkB7bDhzUEbI6S9jhI1Yx\naUEmjEvM2MG54Al9Q91H/7nNDFYSk5XrBSKw+nZBJNHOYIDfRTK3qLXDGtzG48DE\nOGrqEDCT1qD/T2BSwBTCZwBpR6zCk62OLSpB4c1K0BXHZtvSyoTB7SK9aOaYLgXQ\n6n86Q8RgSbSnNXKZ+RbxfPfcv9iPRYzXnf4fuaKYIQKBgQDzmdrl/DzOJXv/PNfu\nkZbLvn52mUwfCVOspl3k7V4xDa+KkWSQrWIE7RbzfOtGlru8gky9Q8LS7PromNJ6\nZK20nHzIhh9MuI62E1baUEMrZbnLKil5636z/hczK+KcXhI8GVnBFZO9GwzJjt2D\nHZ9cQyGIAfy7H26AN6Jq2ZTIlwKBgQDucJY0zSN4mZumJ2NRe8PUyLmNjV8kcqYL\nO8RoCDK+3+pFJTwzKmqUeEdCv2kt4xDcuZvgF1/xYlx+9SqT0+eYk2VmYMP/jjof\nyz/gwOHdyk10pXX5vyV5ZGcHY4ulqKplPETIvD61adkhSCbUsF9UbdIZ78dwJh8C\nbI6WclciUQKBgQCusfyIiG62y6zz6xdT0HbbIH6i4Ob1LwQhwaF+ZjfxZ8Ym0oPT\nOXQc4kZeUYyMr9ZspukPpgOWrjp2CfqPqZnk94CJcZ4KsCQwMQhNQdgZzDcEmvTp\nqVfRDvxmRyeZSeE71lZGoQm1SSvPdDQpLlo1mTL3za0IKM9fBgblJ6qKewKBgQDd\nt+mkzcCXK1dWCLhNE+ZE3iXU38nB7a5DMd9v0XfGkBabF4XEGkQjLTkucykN12Bd\nr2an2XSI1Csojzd5YQmxkhYvPfnjkFCyMeCDUTh2ceDWf+mVQ85H9Dnt3/4CHDXe\nj01yz8EMFpImZZ5eFmd+7eP55EKzIW+iZGmuskIeEQKBgQC94d4twmX9fKgDx+lG\n1pTsba3A979V4NNWFEegxcpd3wsAEDVESgf9YcW8XT9zcdTAeMA2mJpbQF79mi8R\nwNq5aB9+z2etwvcotrUyzqp92RiW1RhkoAblmotwRD5BEljnh6L6NYD/1+JegnFg\nG1f3Qds5c2TfFxCxWhczWSWGIw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@donationsapp-7bdd4.iam.gserviceaccount.com",
+  "client_id": "116082897773110136300",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40donationsapp-7bdd4.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
