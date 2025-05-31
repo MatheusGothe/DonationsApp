@@ -148,7 +148,7 @@ export default function DonationMap() {
         </div>
 
         {/* Mapa */}
-        <div className="flex-1 h-[400px] md:h-screen lg:h-screen  order-1 md:order-2">
+        <div className="flex-1 h-[400px]   order-1 md:order-2">
           {locationResponse && (
             <Map
               points={filteredPoints}
