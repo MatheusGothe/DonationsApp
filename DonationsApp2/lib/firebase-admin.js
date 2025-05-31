@@ -7,8 +7,8 @@ const serviceAccount = {
   ...serviceAccountJson,
   private_key: serviceAccountJson.private_key.replace(/\\n/g, '\n'),
 };
-
-// Inicializa o Firebase Admin app só se ainda não tiver inicializado
+console.log("chave",serviceAccount.private_key.slice(0, 30))
+// Inicializa o Firebase Admin app só se ainda não tiver inicia lizado
 const app = !getApps().length
   ? initializeApp({
       credential: cert(serviceAccount),
