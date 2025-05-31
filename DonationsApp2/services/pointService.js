@@ -2,6 +2,7 @@ import { collection, addDoc, Timestamp, deleteDoc, doc } from "firebase/firestor
 import { db } from "@/lib/firebase"; // ajuste esse caminho conforme seu projeto
 
  const addPoint = async (point) => {
+  console.log(process.env.NEXT_PUBLIC_FIREBASE_COLLECTION)
   try {
     const docRef = await addDoc(collection(db, process.env.NEXT_PUBLIC_FIREBASE_COLLECTION), {
       ...point,
@@ -16,6 +17,8 @@ import { db } from "@/lib/firebase"; // ajuste esse caminho conforme seu projeto
 };
 
 const removePoint = async(pointId) => {
+  console.log(pointId)
+  console.log(process.env.NEXT_PUBLIC_FIREBASE_COLLECTION)
   try {
     await deleteDoc(doc(db, process.env.NEXT_PUBLIC_FIREBASE_COLLECTION, pointId));
     console.log("Ponto removido com sucesso!");

@@ -28,6 +28,9 @@ export default function DonationMap() {
 
   const [filteredPoints, setFilteredPoints] = useState(donationPoints);
   const [locationResponse, setLocationResponse] = useState<boolean>(false);
+  
+  console.log(donationPoints,"from map.tsx")
+
 
   // Atualiza filteredPoints sempre que donationPoints, activeFilter ou searchPoints mudam
   useEffect(() => {

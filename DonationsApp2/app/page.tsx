@@ -22,7 +22,7 @@ async function getDonationPoints(): Promise<DonationPoint[]> {
 
 export default function Home() {
   const donationPoints = use(getDonationPoints());
-
+  console.log(donationPoints,"from page.tsx")
   return (
     <DonationPointProvider initialPoints={donationPoints}>
       <main className="h-screen flex flex-col ">
