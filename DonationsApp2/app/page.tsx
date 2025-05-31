@@ -1,57 +1,39 @@
-// app/page.tsx
+"use client";
 
+import React, { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase"; // seu arquivo onde o Firestore está inicializado
+import { DonationPointProvider, type DonationPoint } from "@/components/donation-point-context";
 import DonationMap from "@/components/donation-map";
-import { DonationPointProvider } from "@/components/donation-point-context";
-import type { DonationPoint } from "@/components/donation-point-context";
 
-const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-const collection = process.env.NEXT_PUBLIC_FIREBASE_COLLECTION;
+export default function Home() {
+  const [donationPoints, setDonationPoints] = useState<DonationPoint[]>([]);
+  const [loading, setLoading] = useState(true);
 
-function parseFirestoreDocument(doc: any) {
-  // Extrai o id do documento
-  const id = doc.name.split('/').pop();
+  useEffect(() => {
+    async function fetchDonationPoints() {
+      try {
+        const colRef = collection(db, "donationPoints");
+        const snapshot = await getDocs(colRef);
 
-  // Converte campos do Firestore para JSON simples
-  const fields = doc.fields || {};
-  const parsedFields: any = {};
+        const points = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as DonationPoint[];
 
-  for (const key in fields) {
-    const value = fields[key];
-    if (value.stringValue !== undefined) parsedFields[key] = value.stringValue;
-    else if (value.integerValue !== undefined) parsedFields[key] = Number(value.integerValue);
-    else if (value.doubleValue !== undefined) parsedFields[key] = Number(value.doubleValue);
-    else if (value.booleanValue !== undefined) parsedFields[key] = value.booleanValue;
-    else if (value.timestampValue !== undefined) parsedFields[key] = value.timestampValue;
-    else if (value.arrayValue !== undefined) {
-      parsedFields[key] = value.arrayValue.values?.map((v: any) => Object.values(v)[0]) || [];
+        setDonationPoints(points);
+      } catch (error) {
+        console.error("Erro ao buscar pontos de doação:", error);
+        setDonationPoints([]);
+      } finally {
+        setLoading(false);
+      }
     }
-    else {
-      parsedFields[key] = null; // outros tipos não tratados
-    }
-  }
 
-  return { id, ...parsedFields };
-}
+    fetchDonationPoints();
+  }, []);
 
-async function getDonationPoints(): Promise<DonationPoint[]> {
-  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collection}?key=${apiKey}`;
-
-  const res = await fetch(url);
-  if (!res.ok) {
-    console.error('Erro ao buscar dados do Firestore', await res.text());
-    return [];
-  }
-  
-  const data = await res.json();
-
-  if (!data.documents) return [];
-
-  return data.documents.map(parseFirestoreDocument);
-}
-
-export default async function Home() {
-  const donationPoints = await getDonationPoints();
+  if (loading) return <p>Carregando pontos de doação...</p>;
 
   return (
     <DonationPointProvider initialPoints={donationPoints}>
