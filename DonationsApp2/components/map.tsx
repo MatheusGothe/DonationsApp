@@ -214,7 +214,6 @@ export default function MapComponent({
   }, [selectedLocation]);
 
   const goToUserLocation = () => {
-    console.log("pa ta caindo aq/????");
     if (!userLocation || !mapInstanceRef.current) {
       toast({
         title: "Permissão de localização necessária",
