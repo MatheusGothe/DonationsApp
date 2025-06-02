@@ -83,13 +83,6 @@ export default function DonationPointList({ points }: DonationPointListProps) {
                       <Shirt className="h-5 w-5 text-blue-500" />
                     </div>
                   )}
-                  <Trash2
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedPointToDelete(point);
-                    }}
-                    className="h-5 w-5 text-red-500 cursor-pointer z-50"
-                  />
                 </div>
               </div>
               <CardDescription className="flex items-center gap-1 text-sm">
