@@ -138,7 +138,14 @@ export default function DonationPointForm({
         required
       />
       <IMaskInput
-        mask="(00) 00000-0000"
+        mask={[
+          {
+            mask: "(00) 0000-0000", // fixo
+          },
+          {
+            mask: "(00) 00000-0000", // celular
+          },
+        ]}     
         name="contactInfo"
         placeholder="Contato"
         value={formData.contactInfo}
