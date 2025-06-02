@@ -92,6 +92,12 @@ export default function DonationPointForm({
 
   const handleSelectLocation = () => {
     setSelectingLocation(true);
+
+     toast({
+      title: "Por favor clique em algum local do mapa",
+      variant: "default",
+      duration: 3000,
+    });
   };
 
   return (
