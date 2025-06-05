@@ -103,7 +103,7 @@ export default function DonationPointForm({
     : await addDonationPoint(pointData);
     setLoading(false);
     if (success) {
-      toast({ title: "Ponto adicionado com sucesso!" });
+      isEditing ? toast({ title: "Ponto atualizdo com sucesso!" }) : toast({ title: "Ponto adicionado com sucesso!" });
       onComplete();
     } else {
       setFormData({
