@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useDonationPoints, type DonationType } from "./donation-point-context";
+import { DonationPoint, useDonationPoints, type DonationType } from "./donation-point-context";
 import { Clock, MapPin } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { FormMessage } from "./formMessage";
@@ -22,12 +22,12 @@ const Lottie = dynamic(() => import("react-lottie-player"), { ssr: false });
 
 interface DonationPointFormProps {
   onComplete: () => void;
+  isEditing?: boolean;
 }
-
 export default function DonationPointForm({
-  onComplete,
+  onComplete,isEditing, 
 }: DonationPointFormProps) {
-  const { addDonationPoint, setSelectingLocation, selectedLocation } =
+  const { addDonationPoint, setSelectingLocation,setSelectedLocation, selectedLocation, pointToEdit,editDonationPoint } =
     useDonationPoints();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -46,6 +46,29 @@ export default function DonationPointForm({
     openingHourEnd: "", // novo campo
     errors: null,
   });
+
+  useEffect(() => {
+
+    if (isEditing && pointToEdit) {
+      setFormData({
+        name: pointToEdit.name,
+        address: pointToEdit.address,
+        type: pointToEdit.type,
+        description: pointToEdit.description,
+        contactInfo: pointToEdit.contactInfo,
+        latitude: pointToEdit.latitude,
+        longitude: pointToEdit.longitude,
+        openingDays: pointToEdit.openingDays || [],
+        openingHourStart: pointToEdit.openingHourStart || "",
+        openingHourEnd: pointToEdit.openingHourEnd || "",
+        period: pointToEdit.period || "",
+        errors: null,
+      });
+      setSelectedLocation({lat: pointToEdit?.latitude,lng: pointToEdit?.longitude});
+    }
+  }, [isEditing, pointToEdit]);  
+
+
 
   useEffect(() => {
     if (selectedLocation) {
@@ -75,7 +98,9 @@ export default function DonationPointForm({
 
     const { errors, ...pointData } = formData;
     setLoading(true);
-    const success = await addDonationPoint(pointData);
+    const success = isEditing
+    ? await editDonationPoint(pointToEdit.id, pointData) // <- importante: passar o id corretamente
+    : await addDonationPoint(pointData);
     setLoading(false);
     if (success) {
       toast({ title: "Ponto adicionado com sucesso!" });

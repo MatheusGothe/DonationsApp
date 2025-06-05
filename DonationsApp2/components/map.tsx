@@ -8,6 +8,7 @@ interface MapProps {
   userLocation?: GeolocationCoordinates | null;
   points: any[];
   requestUserLocation: () => void;
+  canUpdateMarkers?: boolean
 }
 
 const leafletRef = { current: null as typeof import("leaflet") | null };
@@ -24,6 +25,7 @@ const TRACESTACK_ATTRIB =
 export default function MapComponent({
   points,
   requestUserLocation,
+  canUpdateMarkers
 }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const {
@@ -33,14 +35,17 @@ export default function MapComponent({
     selectedLocation,
     pointClicked,
     userLocation,
+    pointToEdit,
+    removeDonationPoint
   } = useDonationPoints();
   const selectingLocationRef = useRef(selectingLocation);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
   const userLocationMarkerRef = useRef<L.Marker | null>(null);
+  
 
   const temporaryMarkerRef = useRef<L.Marker | null>(null); // Marcador temporário durante a seleção
-
+  const pointToEditRef = useRef(pointToEdit);
   const { toast } = useToast();
   const loadLeaflet = async () => {
     if (!leafletRef.current) {
@@ -48,6 +53,15 @@ export default function MapComponent({
     }
     return leafletRef.current;
   };
+
+  useEffect(() => {
+    pointToEditRef.current = pointToEdit;
+  }, [pointToEdit]);
+
+  useEffect(() => {
+    updateMarkers()
+  },[canUpdateMarkers])
+
 
   useEffect(() => {
     selectingLocationRef.current = selectingLocation;
@@ -119,6 +133,19 @@ export default function MapComponent({
       document.head.appendChild(style);
 
       map.on("click", (e: L.LeafletMouseEvent) => {
+        
+        if(pointToEditRef.current){
+          //remover o ponto do objeto points
+          const id = pointToEditRef.current.id;
+
+          // Remove visualmente do mapa se o marcador existir
+          if (markersRef.current[id]) {
+            map.removeLayer(markersRef.current[id]);
+            delete markersRef.current[id];
+          }
+   
+        }
+
         if (selectingLocationRef.current) {
           setSelectedLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
           setSelectingLocation(false);
@@ -168,6 +195,8 @@ export default function MapComponent({
       }
     });
 
+
+
     // Adiciona novos marcadores
     points.forEach((point) => {
       if (!markersRef.current[point.id]) {
@@ -197,6 +226,11 @@ export default function MapComponent({
   }, [updateMarkers]);
 
   useEffect(() => {
+    
+  }, [updateMarkers]);
+
+
+  useEffect(() => {
     goToPointLocation(pointClicked);
   }, [pointClicked]);
 
@@ -208,8 +242,9 @@ export default function MapComponent({
   }, [selectingLocation]);
 
   useEffect(() => {
-    if (selectedLocation == null) {
+    if (selectedLocation == null && temporaryMarkerRef.current) {
       mapInstanceRef.current?.removeLayer(temporaryMarkerRef.current);
+      temporaryMarkerRef.current = null; // importante limpar a referência
     }
   }, [selectedLocation]);
 

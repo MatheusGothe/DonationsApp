@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin, Utensils, Shirt, Clock, Trash2 } from "lucide-react";
+import { MapPin, Utensils, Shirt, Clock, Trash2, Pencil } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -27,10 +27,11 @@ import {
 
 interface DonationPointListProps {
   points: DonationPoint[];
+  openEditForm: (msg: boolean) => void
 }
 
-export default function DonationPointList({ points }: DonationPointListProps) {
-  const { setPointClicked, removeDonationPoint } = useDonationPoints();
+export default function DonationPointList({ points, openEditForm }: DonationPointListProps ) {
+  const { setPointClicked, removeDonationPoint,setPointToEdit } = useDonationPoints();
   const [selectedPointToDelete, setSelectedPointToDelete] =
     useState<DonationPoint | null>(null);
 
@@ -50,12 +51,18 @@ export default function DonationPointList({ points }: DonationPointListProps) {
     }
   };
 
+  const handleShowEditForm = (point) => {
+    openEditForm(true)
+    setPointToEdit(point)
+  }
+
   if (points.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
         Nenhum ponto de doação encontrado com os filtros atuais.
       </div>
     );
+
   }
 
   return (
@@ -83,6 +90,17 @@ export default function DonationPointList({ points }: DonationPointListProps) {
                       <Shirt className="h-5 w-5 text-blue-500" />
                     </div>
                   )}
+                 {/* <Trash2
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPointToDelete(point);
+                    }}
+                    className="h-5 w-5 text-red-500 cursor-pointer z-50"
+                  /> */}
+                  <Pencil
+                    onClick={() => handleShowEditForm(point)}
+                    className="h-5 w-5 text-blue-500 cursor-pointer z-50"
+                  />
                 </div>
               </div>
               <CardDescription className="flex items-center gap-1 text-sm">

@@ -13,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchDonationPoints() {
       try {
-        const colRef = collection(db, "donationPoints");
+        const colRef = collection(db, process.env.NEXT_PUBLIC_FIREBASE_COLLECTION);
         const snapshot = await getDocs(colRef);
 
         const points = snapshot.docs.map(doc => ({

@@ -14,6 +14,8 @@ export default function DonationMap() {
   const [showForm, setShowForm] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [searchPoints, setSearchPoints] = useState<string>("");
+  const [isEditing, setIsEditing] = useState(false)
+  const [updateMarkers,setUpdateMarkers] = useState(false)
 
   const {
     userLocation,
@@ -24,12 +26,18 @@ export default function DonationMap() {
     setSelectingLocation,
     pointClicked,
     setPointClicked,
+    setPointToEdit
   } = useDonationPoints();
 
   const [filteredPoints, setFilteredPoints] = useState(donationPoints);
   const [locationResponse, setLocationResponse] = useState<boolean>(false);
   
-  console.log(donationPoints,"from map.tsx")
+
+  const openEditForm = (msg : boolean) => {
+    setShowForm(msg)
+    setIsEditing(true)
+  }
+
 
 
   // Atualiza filteredPoints sempre que donationPoints, activeFilter ou searchPoints mudam
@@ -78,7 +86,13 @@ export default function DonationMap() {
 
   const handleCancelClick = () => {
     setShowForm(false);
-    setSelectedLocation(null);
+    setSelectedLocation(null)
+    if(isEditing){
+      setIsEditing(false)
+      setPointToEdit(null)
+      setUpdateMarkers((prev) => !prev);
+
+    }
   };
 
   return (
@@ -89,7 +103,7 @@ export default function DonationMap() {
           <h1 className="text-xl font-bold">Pontos de Doação</h1>
         </div>
         <Button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => setShowForm(true)}
           className="bg-green-600 hover:bg-green-700"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -132,7 +146,10 @@ export default function DonationMap() {
                   size={20}
                 />
               </div>
-              <DonationPointList points={filteredPoints} />
+              <DonationPointList
+                openEditForm={openEditForm}
+                points={filteredPoints}
+              />
             </>
           )}
 
@@ -140,9 +157,9 @@ export default function DonationMap() {
           {showForm && (
             <div className="bg-white rounded-lg shadow p-4 mt-4">
               <h2 className="text-lg font-semibold mb-4">
-                Cadastrar Novo Ponto
+                {isEditing ? "Editar Ponto" : "Cadastrar Novo Ponto"}
               </h2>
-              <DonationPointForm onComplete={handleCancelClick} />
+              <DonationPointForm isEditing={isEditing} canUpdateMarkers={updateMarkers} onComplete={handleCancelClick} />
             </div>
           )}
         </div>
@@ -151,6 +168,7 @@ export default function DonationMap() {
         <div className="flex-1 h-[400px]   order-1 md:order-2">
           {locationResponse && (
             <Map
+              canUpdateMarkers={updateMarkers}
               points={filteredPoints}
               requestUserLocation={requestUserLocation}
               className="h-full"
